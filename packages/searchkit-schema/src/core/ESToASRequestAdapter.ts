@@ -8,15 +8,15 @@ export const ESToASRequestAdapter = (esRequest) => ({
     },
     filters: {
       all: esRequest.post_filter?.bool?.must?.map((postFilter) => ({
-        any: [
-          Object.entries(postFilter.bool.must[0].term).reduce(
+        all: postFilter.bool.must.map((must) =>
+          Object.entries(must.term).reduce(
             (p, [k, v]) => ({
               ...p,
               [k.split('.')[0]]: v
             }),
             {}
           )
-        ]
+        )
       }))
     },
 

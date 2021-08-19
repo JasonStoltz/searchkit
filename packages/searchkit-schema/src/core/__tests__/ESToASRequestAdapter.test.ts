@@ -10,6 +10,11 @@ describe('ESToASRequestAdapter', () => {
               must: [
                 {
                   term: {
+                    'types.keyword': 'Rock'
+                  }
+                },
+                {
+                  term: {
                     'types.keyword': 'Water'
                   }
                 }
@@ -81,14 +86,17 @@ describe('ESToASRequestAdapter', () => {
         filters: {
           all: [
             {
-              any: [
+              all: [
+                {
+                  types: 'Rock'
+                },
                 {
                   types: 'Water'
                 }
               ]
             },
             {
-              any: [
+              all: [
                 {
                   legendary: 'False'
                 }
@@ -137,14 +145,17 @@ describe('ESToASRequestAdapter', () => {
         filters: {
           all: [
             {
-              any: [
+              all: [
+                {
+                  types: 'Rock'
+                },
                 {
                   types: 'Water'
                 }
               ]
             },
             {
-              any: [
+              all: [
                 {
                   legendary: 'False'
                 }
