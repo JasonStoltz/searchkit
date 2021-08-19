@@ -1,3 +1,4 @@
+import AppSearchClient from '@elastic/app-search-node'
 import dataloader from 'dataloader'
 import { Client } from '@elastic/elasticsearch'
 import HttpAgent, { HttpsAgent } from 'agentkeepalive'
@@ -6,6 +7,12 @@ import ESQueryError from '../utils/ESQueryError'
 import { BaseFacet } from '../facets'
 import QueryManager from './QueryManager'
 import { filterTransform } from './FacetsFns'
+import { ASToESResponseAdapter } from './ASToESResponseAdapter'
+import { ESToASRequestAdapter } from './ESToASRequestAdapter'
+
+const apiKey = process.env.AS_API_KEY
+const baseUrlFn = () => 'http://localhost:3002/api/as/v1/'
+const appSearchClient = new AppSearchClient(undefined, apiKey, baseUrlFn)
 
 export interface SearchResponse<T> {
   took: number
@@ -137,12 +144,10 @@ export default class SearchkitRequest {
 
   private async executeQuery(esQuery): Promise<SearchResponse<any>> {
     try {
-      const response = await this.client.search<SearchResponse<any>>({
-        index: this.config.index,
-        body: esQuery
-      })
+      const asReqeust = ESToASRequestAdapter(esQuery)
+      const asResponse = await appSearchClient.search('pokemon', asReqeust.query, asReqeust.options)
 
-      return response.body
+      return ASToESResponseAdapter(asResponse)
     } catch (e) {
       if (e.meta?.statusCode === 400) {
         throw new ESQueryError(
