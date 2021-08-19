@@ -2,6 +2,34 @@ import { ESToASRequestAdapter } from '../ESToASRequestAdapter'
 
 describe('ESToASRequestAdapter', () => {
   const esQuery = {
+    post_filter: {
+      bool: {
+        must: [
+          {
+            bool: {
+              must: [
+                {
+                  term: {
+                    'types.keyword': 'Water'
+                  }
+                }
+              ]
+            }
+          },
+          {
+            bool: {
+              must: [
+                {
+                  term: {
+                    legendary: 'False'
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
     query: {
       bool: {
         must: [
@@ -50,6 +78,24 @@ describe('ESToASRequestAdapter', () => {
     expect(ESToASRequestAdapter(esQuery)).toEqual({
       query: 'pikachu',
       options: {
+        filters: {
+          all: [
+            {
+              any: [
+                {
+                  types: 'Water'
+                }
+              ]
+            },
+            {
+              any: [
+                {
+                  legendary: 'False'
+                }
+              ]
+            }
+          ]
+        },
         facets: {
           types: [
             {
@@ -88,6 +134,24 @@ describe('ESToASRequestAdapter', () => {
     ).toEqual({
       query: 'pikachu',
       options: {
+        filters: {
+          all: [
+            {
+              any: [
+                {
+                  types: 'Water'
+                }
+              ]
+            },
+            {
+              any: [
+                {
+                  legendary: 'False'
+                }
+              ]
+            }
+          ]
+        },
         facets: {
           types: [
             {
